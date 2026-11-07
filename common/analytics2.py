@@ -43,7 +43,8 @@ def musteri_degisim(tum, m, a, b, ca, cb):
     C = set(an.araliga_kes(m, ca, cb)["CustomerID"])
     yeni = {c for c in S - C if ilk[c] >= pd.Timestamp(a)}
     geri = (S - C) - yeni
-    return dict(aS=len(S), aC=len(C), nw=len(yeni), bk=len(geri), ls=len(C - S), ct=len(S & C))
+    yeniC = {c for c in C if ilk[c] >= pd.Timestamp(ca)}
+    return dict(aS=len(S), aC=len(C), nw=len(yeni), nwC=len(yeniC), bk=len(geri), ls=len(C - S), ct=len(S & C))
 
 
 def kohort(m, yil):

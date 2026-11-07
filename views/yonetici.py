@@ -193,20 +193,25 @@ with st.container(border=True):
     ek_u = ((gA / fiyat if onA else 0) + (uB if onB else 0) + (gC / fiyat if onC else 0)) / WK
     util = (base_u + ek_u) / kapasite * 100
     fig = go.Figure()
-    fig.add_bar(y=["Tahmin"], x=[baz / 1e6], orientation="h", marker_color="#d4cdbf", name="Bir şey yapmazsak", text=[f"Bir şey yapmazsak {ui.sayi(baz / 1e6, 2)} M ₺"], textposition="inside")
-    for ad, g, on, rn in (("Büyük müşterileri ara", gA, onA, "#d9622b"), ("Yavaş ürünleri paketle", gB, onB, "#3d9a84"), ("Kupon", gC, onC, "#e0a526")):
+    fig.add_bar(y=["Tahmin"], x=[baz / 1e6], orientation="h", marker_color="#d4cdbf", name="Bir şey yapmazsak",
+                text=[f"Bir şey yapmazsak {ui.sayi(baz / 1e6, 2)} M ₺"], textposition="inside", insidetextanchor="start",
+                hovertemplate=f"<b>Bir şey yapmazsak</b><br>{ui.tl(baz)}<br>Tahmin aralığı: {ui.tl(baz * (1 - wape))} – {ui.tl(baz * (1 + wape))}<extra></extra>")
+    for ad, g, on, rn in (("Büyük müşterileri ara", gA, onA, "#d9622b"), ("Yavaş ürünleri paketle", gB, onB, "#3d9a84"), ("Kupon gönder", gC, onC, "#e0a526")):
         if on:
-            fig.add_bar(y=["Tahmin"], x=[g / 1e6], orientation="h", marker_color=rn, name=ad, hovertemplate=f"{ad}: +%{{x:.3f}} M ₺<extra></extra>")
+            fig.add_bar(y=["Tahmin"], x=[g / 1e6], orientation="h", marker_color=rn, name=ad,
+                        text=[f"+%{ui.sayi(g / baz * 100, 1)}"], textposition="inside",
+                        hovertemplate=f"<b>{ad}</b><br>Ek ciro: +{ui.tl(g)}<br>Tahmine göre: +%{ui.sayi(g / baz * 100, 1)}<br>Toplam: {ui.tl(baz + tot)}<extra></extra>")
     fig.add_vrect(x0=baz * (1 - wape) / 1e6, x1=baz * (1 + wape) / 1e6, fillcolor="rgba(31,42,68,.08)", line_width=0, layer="below")
-    fig.update_layout(barmode="stack", height=130, margin=dict(l=0, r=0, t=6, b=0), showlegend=False, plot_bgcolor="white",
-                      xaxis=dict(range=[0, baz * 1.32 / 1e6], title=f"tahmin ±%{ui.sayi(wape * 100, 0)} oynayabilir (gölge alan) · M ₺"), yaxis=dict(showticklabels=False))
+    fig.update_layout(barmode="stack", height=150, margin=dict(l=0, r=0, t=6, b=0), showlegend=True, plot_bgcolor="white",
+                      legend=dict(orientation="h", y=-0.35, font=dict(size=11)),
+                      xaxis=dict(range=[0, baz * 1.32 / 1e6], title=f"M ₺ · gölge alan: tahmin ±%{ui.sayi(wape * 100, 0)} oynayabilir"), yaxis=dict(showticklabels=False))
     r1, r2 = st.columns([2, 1])
     with r1:
         st.plotly_chart(fig, use_container_width=True)
     with r2:
         st.markdown(f"<div class='out'><div class='t'>Üç aksiyondan beklenen ek ciro</div><div class='v'>+{ui.tl(tot)} "
                     f"<span class='chg {'pos' if tot > 0 else 'mute'}' style='font-size:11px'>+%{ui.sayi(tot / baz * 100, 1)}</span></div></div>"
-                    f"<div style='margin-top:6px'><span class='pill' style='background:{'#fbe3e0' if util > 100 else ('#fdf0cf' if util > 90 else '#d6ece5')}'>Stok kapasitesi %{ui.sayi(util, 0)} dolu</span></div>"
+                    f"<div style='margin-top:6px'><span class='pill' style='background:{'#fbe3e0' if util > 100 else ('#fdf0cf' if util > 90 else '#d6ece5')}'>Stok kapasitesi %{ui.sayi(util, 0)} dolu</span></div><div style='font-size:12px;margin-top:6px'>Hiçbir şey yapmazsan: <b>{ui.tl(baz)}</b><br>Aksiyonlarla: <b>{ui.tl(baz + tot)}</b> (+%{ui.sayi(tot / baz * 100, 1)})</div>"
                     f"<div style='font-size:11px;color:#5b6475;margin-top:4px'>Kapasite varsayımı: verideki en yoğun haftanın adedi.</div>", unsafe_allow_html=True)
     st.markdown(f"<div style='font-size:12px;color:#5b6475'>Bir şey yapmazsak <b>{ui.tl(baz)}</b> · Aksiyonlarla <b>{ui.tl(baz + tot)}</b>. " +
                 (f"Bu ek ciro küçük: tahminin kendisi zaten ±{ui.tl(baz * wape)} oynayabilir. Gerçek etkiyi görmek için aksiyonu müşterilerin yarısına uygula, diğer yarısıyla karşılaştır." if tot > 0 else "Plana en az bir aksiyon ekle.") + "</div>", unsafe_allow_html=True)

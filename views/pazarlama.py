@@ -29,7 +29,7 @@ dpcc = C["dnet"] / C["dcust"] if C["dcust"] else 0
 st.markdown(w.ust_bilgi(S, C, a, b, ca, cb), unsafe_allow_html=True)
 w.kgrid([
     w.kart("Aktif müşteri", ui.sayi(ch["aS"]), w.chg(w.rel(ch["aS"], ch["aC"]), hN), "Günlük ort.", ui.sayi(S["dcust"], 1), w.chg(w.rel(S["dcust"], C["dcust"]), hD)),
-    w.kart("Yeni müşteri", ui.sayi(ch["nw"]), "<span class='chg mute'>ilk alımı bu dönemde</span>", "Günlük ort.", ui.sayi(ch["nw"] / S["gun"], 2), ""),
+    w.kart("Yeni müşteri", ui.sayi(ch["nw"]), w.chg(w.rel(ch["nw"], ch["nwC"]), hN), "Günlük ort.", ui.sayi(ch["nw"] / S["gun"], 2), w.chg(w.rel(ch["nw"] / S["gun"], ch["nwC"] / C["gun"]), hD)),
     w.kart("Satılan adet", ui.sayi(S["q"] / 1000, 1) + " bin", w.chg(w.rel(S["q"], C["q"]), hN), "Günlük ort.", ui.sayi(S["dq"]), w.chg(w.rel(S["dq"], C["dq"]), hD)),
     w.kart("Net ciro", ui.sayi(S["net"] / 1e6, 2) + " M ₺", w.chg(w.rel(S["net"], C["net"]), hN), "Günlük ort.", ui.sayi(S["dnet"] / 1000, 1) + " bin ₺", w.chg(w.rel(S["dnet"], C["dnet"]), hD)),
     w.kart("Müşteri başı ciro", ui.sayi(perC / 1000, 1) + " bin ₺", w.chg(w.rel(perC, perCc), hN), "Günlük ort.", ui.sayi(dpc) + " ₺", w.chg(w.rel(dpc, dpcc), hD), "#e0a526"),

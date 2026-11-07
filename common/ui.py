@@ -10,6 +10,9 @@ CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap');
 html, body, [class*="css"] { font-family: 'Inter', system-ui, sans-serif; }
+.st-key-x{}
+[data-testid="stMarkdownContainer"] > *:last-child { margin-bottom:0 !important; }
+div[data-testid="stVerticalBlockBorderWrapper"]:has(> div > div[data-testid="stVerticalBlock"]) { padding-bottom:.5rem; }
 .block-container { padding-top: 1.6rem; max-width: 1280px; }
 h1, h2, h3 { font-family: 'Poppins', sans-serif !important; color: #1f2a44; }
 [data-testid="stSidebar"] { background: #f1ede4; }

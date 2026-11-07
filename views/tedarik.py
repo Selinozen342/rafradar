@@ -15,10 +15,16 @@ def c_abc(_tum, vid):
 
 
 @st.cache_data(show_spinner=False)
-def c_hafta(_tum, vid, urun):
+def _c_hafta(_tum, vid, urun):
     wk, gunluk = an2.haftalik(_tum, urun)
     sonuc, en = an2.geri_test(wk)
-    return wk, gunluk, sonuc, en
+    return wk, gunluk, [{k: v for k, v in r.items() if k != "f"} for r in sonuc], en
+
+
+def c_hafta(tum, vid, urun):
+    """Önbellekten gelen sonuca (pickle edilemeyen) tahmin fonksiyonlarını geri ekler."""
+    wk, gunluk, sonuc, en = _c_hafta(tum, vid, urun)
+    return wk, gunluk, [dict(r, f=f) for r, (_, f) in zip(sonuc, an2.MODELLER)], en
 
 
 @st.cache_data(show_spinner=False)
