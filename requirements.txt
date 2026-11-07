@@ -1,6 +1,7 @@
-streamlit>=1.37
+streamlit>=1.46
 pandas>=2.0
 numpy
 plotly>=5.20
 pyarrow
 openpyxl
+scikit-learn

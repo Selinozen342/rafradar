@@ -50,6 +50,12 @@ def temizle(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
     d["gross"] = d["Quantity"] * d["UnitPrice"]
     d["net"] = d["Quantity"] * d["NetPrice"]
     d["disc"] = 1 - d["net"] / d["gross"]
+    d["gun"] = d["InvoiceDate"].dt.normalize()
+    d["dow"] = d["gun"].dt.dayofweek
+    for c in ["Category", "City", "Description"]:
+        d[c] = d[c].astype("string")
+    d["City"] = d["City"].str.title()
+    d.loc[d["City"] == "Istanbul", "City"] = "İstanbul"
     return d, ilk - len(d)
 
 
