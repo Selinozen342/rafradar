@@ -26,9 +26,10 @@ h1, h2, h3 { font-family: 'Poppins', sans-serif !important; color: #1f2a44; }
 .chg { display:inline-block; font-size:12px; padding:1px 8px; border-radius:6px; background:#ece7dd; color:#5b6475 }
 .chg.pos { background:#d6ece5; color:#14513f } .chg.neg { background:#fbe3e0; color:#8f2a24 }
 .chg.neu { background:#e6ebf5; color:#2a3a63 }
-.hd { font-family:Poppins,sans-serif; font-weight:700; font-size:18px; color:#1f2a44; margin:0 }
+.hd { font-family:Poppins,sans-serif !important; font-weight:700 !important; font-size:18px !important; line-height:1.3 !important; color:#1f2a44; margin:0 !important; padding:0 !important }
 .num { display:inline-flex; width:22px; height:22px; border-radius:50%; background:#1f2a44; color:#fff; font-size:12px; align-items:center; justify-content:center; margin-right:8px; font-family:Inter,sans-serif }
-.sub { color:#5b6475; font-size:13px; margin:2px 0 8px }
+.sub { color:#5b6475 !important; font-size:13px !important; margin:2px 0 8px !important }
+.lst { font-size:13px; line-height:1.45; margin:0; padding-left:18px } .lst li { margin-bottom:8px } .lst small { color:#5b6475 }
 .out { background:#f1f7f5; border-radius:10px; padding:8px 12px } .out .t { font-size:12px; color:#5b6475 } .out .v { font-family:Poppins,sans-serif; font-weight:700; font-size:20px; color:#1f2a44 }
 table.t { width:100%; border-collapse:collapse; font-size:13px } table.t th { text-align:left; font-size:12px; color:#5b6475; font-weight:500; padding:6px 8px; border-bottom:1px solid #e4dfd6 }
 table.t td { padding:7px 8px; border-bottom:1px solid #eee9df } table.t td.r, table.t th.r { text-align:right }

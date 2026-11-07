@@ -153,9 +153,11 @@ with st.container(border=True):
             text=[f"{ui.isaret(v, 1)} bin ₺" for v in ef], textposition="outside", cliponaxis=False,
             hovertemplate="%{y}: %{text} günlük ciro etkisi<extra></extra>"))
         fig.update_yaxes(autorange="reversed")
+        mxa = max([abs(v) for v in ef] + [1])
         fig.update_xaxes(zeroline=True, zerolinecolor="#9aa3b2", showgrid=False, showticklabels=False,
-                         range=[min(ef + [0]) * 1.5 - 1, max(ef + [0]) * 1.5 + 1])
-        fig.update_layout(height=300, margin=dict(l=0, r=0, t=6, b=0), plot_bgcolor="white")
+                         range=[-mxa * 1.45, mxa * 0.45 if min(ef) < 0 and max(ef) <= 0 else mxa * 1.45])
+        fig.update_yaxes(automargin=True)
+        fig.update_layout(height=300, margin=dict(l=10, r=10, t=6, b=0), plot_bgcolor="white")
         st.plotly_chart(fig, use_container_width=True)
     with s2:
         yil_hizi = tum["net"].sum() / ((tum["gun"].max() - tum["gun"].min()).days + 1)
@@ -259,8 +261,10 @@ with st.container(border=True):
             st.caption(alt)
             if not liste:
                 st.write("Çift bulunamadı.")
-            for i, c in enumerate(liste, 1):
-                st.markdown(f"{i}. **{c['a']} + {c['b']}**  \n{c['n']} sipariş · %{ui.sayi(c['oran'] * 100, 0)}")
+            if liste:
+                st.markdown("<ol class='lst'>" + "".join(
+                    f"<li><b>{c['a']} + {c['b']}</b><br><small>{c['n']} sipariş · %{ui.sayi(c['oran'] * 100, 0)}</small></li>"
+                    for c in liste) + "</ol>", unsafe_allow_html=True)
     st.markdown(f"**Seçilen tarihte best seller'lar ve en çok birlikte alındıkları ürün · {et(a, b)}**")
     if cok.empty:
         st.info("Bu aralıkta satış yok.")
@@ -273,7 +277,8 @@ with st.container(border=True):
                "Sepette best seller varsa ikinci ürün öneri olarak gösterilir.")
 
 # ---------- 5-6. Pareto ve kampanya ----------
-tur = st.selectbox("Segmentasyon türü", ["Müşteri segmentasyonu", "Ürün segmentasyonu"], key="seg_tur")
+_sk, _ = st.columns([1, 2])
+tur = _sk.selectbox("Segmentasyon türü", ["Müşteri segmentasyonu", "Ürün segmentasyonu"], key="seg_tur")
 musteri_mi = tur.startswith("Müşteri")
 anahtar = "CustomerID" if musteri_mi else "Description"
 birim = "Müşteri" if musteri_mi else "Ürün"
@@ -306,13 +311,14 @@ with p5, st.container(border=True):
     fig = go.Figure()
     sinir = [0] + [sayilar["A"] / n * 100, (sayilar["A"] + sayilar["B"]) / n * 100, 100]
     for (x0, x1, renk, ad) in ((sinir[0], sinir[1], "#d6ece5", "A"), (sinir[1], sinir[2], "#fdf0cf", "B"), (sinir[2], sinir[3], "#fbe0d3", "C")):
-        fig.add_vrect(x0=x0, x1=x1, fillcolor=renk, line_width=0, annotation_text=ad, annotation_position="bottom")
+        fig.add_vrect(x0=x0, x1=x1, fillcolor=renk, line_width=0, layer="below", annotation_text=ad, annotation_position="bottom")
     fig.add_scatter(x=np.r_[0, x], y=np.r_[0, pc["kum"].values * 100], mode="lines", line=dict(color="#1f2a44", width=2),
                     hovertemplate="%{x:.1f}% → %{y:.1f}%<extra></extra>")
     fig.add_scatter(x=[sinir[1]], y=[80], mode="markers+text", marker=dict(color="#c8503f", size=9),
                     text=[f"%{ui.sayi(sinir[1], 1)} → %80"], textposition="middle right")
     fig.update_layout(height=320, showlegend=False, margin=dict(l=0, r=0, t=6, b=0),
-                      xaxis_title=f"{birim.lower()} yüzdesi (ciroya göre sıralı)", yaxis_title="kümülatif ciro %")
+                      xaxis_title=f"{birim.lower()} yüzdesi (ciroya göre sıralı)", yaxis_title="kümülatif ciro %",
+                      xaxis_range=[0, 100], yaxis_range=[0, 105], plot_bgcolor="white")
     st.plotly_chart(fig, use_container_width=True)
 
 with p6, st.container(border=True):

@@ -36,11 +36,12 @@ if dosya is not None:
 if "df" in st.session_state:
     d = st.session_state["df"]
     st.success("Veri hazır")
-    c = st.columns(4)
+    c = st.columns(5)
     c[0].metric("Kullanılan satır", ui.sayi(len(d)))
     c[1].metric("Müşteri", ui.sayi(d["CustomerID"].nunique()))
     c[2].metric("Ürün", ui.sayi(d["Description"].nunique()))
-    c[3].metric("Tarih aralığı", f'{d["InvoiceDate"].min():%d.%m.%Y} – {d["InvoiceDate"].max():%d.%m.%Y}')
+    c[3].metric("İlk tarih", f'{d["InvoiceDate"].min():%d.%m.%Y}')
+    c[4].metric("Son tarih", f'{d["InvoiceDate"].max():%d.%m.%Y}')
     st.caption(f'{ui.sayi(st.session_state["atilan"])} satır temizlikte çıkarıldı.')
     if st.button("Dashboard'a geç", type="primary"):
         st.switch_page("views/yonetici.py")
