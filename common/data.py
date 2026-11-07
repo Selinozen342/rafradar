@@ -14,7 +14,7 @@ def oku(dosya) -> pd.DataFrame:
         return pd.read_parquet(dosya)
     if ad.endswith(".xlsx"):
         return pd.read_excel(dosya)
-    ham = dosya.getvalue() if hasattr(dosya, "getvalue") else dosya.read()
+    ham = dosya.getvalue()
     ornek = ham[:2000].decode("utf-8-sig", errors="ignore")
     ayrac = ";" if ornek.count(";") > ornek.count(",") else ","
     ondalik = "," if ayrac == ";" else "."
@@ -59,19 +59,28 @@ def temizle(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
     return d, ilk - len(d)
 
 
+def kalite_ozeti(ham: pd.DataFrame, temiz: pd.DataFrame, atilan: int) -> dict:
+    """Veri Kalitesi sayfası için ham dosyadan sayımlar."""
+    alanlar = [c for c in ZORUNLU + ["StockCode"] if c in ham.columns]
+    bos = {c: int(ham[c].isna().sum()) for c in alanlar}
+    bil = 0
+    if "StockCode" in ham.columns:
+        bil = int(ham["StockCode"].astype(str).str.contains(r"E\+\d+", regex=True, na=False).sum())
+    return dict(ham_satir=len(ham), ham_sutun=ham.shape[1], temiz_satir=len(temiz), atilan=atilan,
+                yeni_sutun=temiz.shape[1] - ham.shape[1], bos=bos, tekrar=int(ham.duplicated().sum()), bilimsel=bil)
+
+
 @st.cache_data(show_spinner=False)
 def hazirla(dosya_adi: str, icerik: bytes):
     """Dosyayı okur, kontrol eder, temizler. Aynı dosya için bir kez çalışır."""
     class _F(io.BytesIO):
         name = dosya_adi
-        def getvalue(self_):  # noqa: N805
-            return icerik
     ham = oku(_F(icerik))
     hatalar = kontrol(ham)
     if hatalar:
-        return None, 0, hatalar
+        return None, 0, hatalar, {}
     temiz, atilan = temizle(ham)
-    return temiz, atilan, []
+    return temiz, atilan, [], kalite_ozeti(ham, temiz, atilan)
 
 
 def veri() -> pd.DataFrame:

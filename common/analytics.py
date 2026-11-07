@@ -15,11 +15,11 @@ def ozet(df, a, b):
     net, brut, adet = m["net"].sum(), m["gross"].sum(), m["Quantity"].sum()
     sip = m["InvoiceNo"].nunique()
     g = m.groupby("gun").agg(net=("net", "sum"), gross=("gross", "sum"), q=("Quantity", "sum"),
-                             o=("InvoiceNo", "nunique"))
+                             o=("InvoiceNo", "nunique"), c=("CustomerID", "nunique"))
     g1 = g[g["o"] > 0]
     g2 = g[g["gross"] > 0]
     return dict(
-        gun=gun, net=net, gross=brut, q=adet, ord=sip,
+        gun=gun, net=net, gross=brut, q=adet, ord=sip, musteri=m["CustomerID"].nunique(), dcust=g["c"].sum() / gun,
         dnet=net / gun, dord=sip / gun, dq=adet / gun,
         b=adet / sip if sip else 0, basket=net / sip if sip else 0,
         disc=1 - net / brut if brut else 0, L=brut / adet if adet else 0,

@@ -21,7 +21,7 @@ with sag:
 if dosya is not None:
     with st.status("Veri işleniyor…", expanded=True) as durum:
         st.write("Dosya okunuyor ve kontrol ediliyor")
-        df, atilan, hatalar = data.hazirla(dosya.name, dosya.getvalue())
+        df, atilan, hatalar, kalite = data.hazirla(dosya.name, dosya.getvalue())
         if hatalar:
             durum.update(label="Dosya uygun değil", state="error")
             for h in hatalar:
@@ -31,6 +31,7 @@ if dosya is not None:
             durum.update(label="Veri hazır", state="complete", expanded=False)
             st.session_state["df"] = df
             st.session_state["atilan"] = atilan
+            st.session_state["kalite"] = kalite
             st.session_state["dosya_adi"] = dosya.name
 
 if "df" in st.session_state:

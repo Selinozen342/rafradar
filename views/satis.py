@@ -271,6 +271,7 @@ with st.container(border=True):
     else:
         g = cok.copy()
         g["Birlikte alma oranı"] = g["Birlikte alma oranı"].map(lambda v: f"%{ui.sayi(v * 100, 0)}")
+        g["#"] = g["#"].astype(str)
         g["Adet"] = g["Adet"].map(ui.sayi)
         st.dataframe(g, hide_index=True, use_container_width=True)
     st.caption("Birlikte alma oranı: best seller'ı alan siparişlerin yüzde kaçında bu ürün de var. "
